@@ -1,0 +1,71 @@
+kind: pipeline
+type: kubernetes
+name: build-arm64
+
+platform:
+  os: linux
+  arch: arm64
+
+node_selector:
+  beta.kubernetes.io/arch: arm64
+
+steps:
+  - name: build-arm64
+    image: docker:dind
+    privileged: true
+    volumes:
+      - name: dockersock
+        path: /var/run
+    environment:
+      ARCH: arm64
+      DOCKER_HOST: unix:///var/run/docker.sock
+      DOCKERHUB_USER:
+        from_secret: dockerhub_user
+      DOCKERHUB_PASSWORD:
+        from_secret: dockerhub_password
+    commands:
+      - export IMAGE_NAME=enclarify/superset:0.1.0-$${ARCH}
+      - docker build -t $${IMAGE_NAME} .
+      - docker login -u $${DOCKERHUB_USER} -p $${DOCKERHUB_PASSWORD}
+      - docker push $${IMAGE_NAME}
+volumes:
+  - name: dockersock
+    host:
+      path: /var/run
+---
+kind: pipeline
+type: kubernetes
+name: build-armv7
+
+platform:
+  os: linux
+  arch: arm
+
+node_selector:
+  beta.kubernetes.io/arch: arm
+
+steps:
+  - name: build-armv7
+    image: docker:dind
+    privileged: true
+    volumes:
+      - name: dockersock
+        path: /var/run
+    environment:
+      CYCLE_TRACKER_MODULE: web
+      CYCLE_TRACKER_VERSION: 0.8.0
+      ARCH: armv7
+      DOCKER_HOST: unix:///var/run/docker.sock
+      DOCKERHUB_USER:
+        from_secret: dockerhub_user
+      DOCKERHUB_PASSWORD:
+        from_secret: dockerhub_password
+    commands:
+      - export IMAGE_NAME=enclarify/cycle-tracker-$${CYCLE_TRACKER_MODULE}:$${CYCLE_TRACKER_VERSION}-$${ARCH}
+      - docker build -t $${IMAGE_NAME} $${CYCLE_TRACKER_MODULE}
+      - docker login -u $${DOCKERHUB_USER} -p $${DOCKERHUB_PASSWORD}
+      - docker push $${IMAGE_NAME}
+volumes:
+  - name: dockersock
+    host:
+      path: /var/run

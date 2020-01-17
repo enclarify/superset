@@ -1,0 +1,11 @@
+apache-superset==0.35.1
+flask-cors==3.0.8
+flask-mail==0.9.1
+flask-oauth==0.12
+flask_oauthlib==0.9.5
+sasl==0.2.1
+thrift-sasl==0.3.0
+pyldap==3.0.0.post1
+gevent==1.4.0
+mysqlclient==1.4.6
+redis==3.3.11
