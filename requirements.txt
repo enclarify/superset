@@ -1,4 +1,4 @@
-apache-superset==0.35.1
+apache-superset==0.35.2
 flask-cors==3.0.8
 flask-mail==0.9.1
 flask-oauth==0.12
